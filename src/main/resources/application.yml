@@ -1,6 +1,5 @@
-spring.application.name=order-service
 server:
-  port: 8081   # change if needed
+  port: 8081
 
 spring:
   application:
@@ -8,14 +7,14 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/order_db
-    username: demo_user
-    password: demo_password
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -24,7 +23,6 @@ spring:
 
   flyway:
     enabled: true
-    baseline-on-migrate: true
     locations: classpath:db/migration
 
 management:
@@ -35,3 +33,7 @@ management:
   endpoint:
     health:
       show-details: when_authorized
+
+logging:
+  level:
+    org.flywaydb: DEBUG
