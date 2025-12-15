@@ -7,6 +7,7 @@ import com.akhil.orders.order_service.mapper.OrderMapper;
 import com.akhil.orders.order_service.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('USER')")
     public OrderResponse createOrder(@Valid @RequestBody CreateOrderRequest request) {
 
         Order order = orderService.createOrder(
@@ -34,6 +36,7 @@ public class OrderController {
     }
 
     @PostMapping("/{orderId}/confirm")
+    @PreAuthorize("hasRole('ADMIN')")
     public OrderResponse confirmOrder(@PathVariable UUID orderId) {
         return OrderMapper.toResponse(
                 orderService.confirmOrder(orderId)
@@ -48,6 +51,7 @@ public class OrderController {
     }
 
     @PostMapping("/{orderId}/cancel")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public OrderResponse cancel(@PathVariable UUID orderId) {
         return OrderMapper.toResponse(
                 orderService.cancelOrder(orderId)

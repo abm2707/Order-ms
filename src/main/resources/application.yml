@@ -37,3 +37,26 @@ management:
 logging:
   level:
     org.flywaydb: DEBUG
+
+security:
+  jwt:
+    secret: very-secret-key-change-this-in-prod-1234567890
+    expiration: 3600000
+
+kafka:
+  bootstrap-servers: localhost:9092
+  consumer:
+    auto-startup: true
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring.json.trusted.packages: "com.akhil.orders.order_service.event"
+      spring.json.value.default.type: com.akhil.orders.order_service.event.OrderCreatedEvent
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.trusted.packages: "com.akhil.orders.order_service.event"
+      spring.json.value.default.type: com.akhil.orders.order_service.event.OrderCreatedEvent
+
+

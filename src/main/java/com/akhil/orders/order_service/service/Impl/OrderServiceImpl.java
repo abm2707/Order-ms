@@ -1,9 +1,12 @@
 package com.akhil.orders.order_service.service.Impl;
 
+import com.akhil.orders.order_service.event.OrderEventPublisher;
 import com.akhil.orders.order_service.domain.entity.Order;
+import com.akhil.orders.order_service.event.OrderCreatedEvent;
 import com.akhil.orders.order_service.repository.OrderRepository;
 import com.akhil.orders.order_service.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +19,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    @Autowired
+    OrderEventPublisher eventPublisher;
+
+    public OrderServiceImpl(OrderRepository orderRepository, OrderEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -34,7 +41,18 @@ public class OrderServiceImpl implements OrderService {
                 currency
         );
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        eventPublisher.publishOrderCreated(
+                new OrderCreatedEvent(
+                        savedOrder.getId(),
+                        savedOrder.getCustomerId(),
+                        savedOrder.getTotalAmount(),
+                        savedOrder.getCurrency(),
+                        savedOrder.getCreatedAt()
+                )
+        );
+        return savedOrder;
     }
 
     @Override
