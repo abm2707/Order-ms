@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: order-service
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
 
   datasource:
     url: jdbc:postgresql://localhost:5432/order_db
@@ -36,7 +39,11 @@ management:
 
 logging:
   level:
+    root: WARN
     org.flywaydb: DEBUG
+    org.apache.kafka: ERROR
+    kafka: ERROR
+    org.springframework.kafka: ERROR
 
 security:
   jwt:
@@ -50,13 +57,13 @@ kafka:
     key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     properties:
-      spring.json.trusted.packages: "com.akhil.orders.order_service.event"
-      spring.json.value.default.type: com.akhil.orders.order_service.event.OrderCreatedEvent
+      spring.json.trusted.packages: "com.akhil.orders.event"
+      spring.json.value.default.type: com.akhil.orders.event.OrderCreatedEvent
   producer:
     key-serializer: org.apache.kafka.common.serialization.StringSerializer
     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:
-      spring.json.trusted.packages: "com.akhil.orders.order_service.event"
-      spring.json.value.default.type: com.akhil.orders.order_service.event.OrderCreatedEvent
+      spring.json.trusted.packages: "com.akhil.orders.event"
+      spring.json.value.default.type: com.akhil.orders.event.OrderCreatedEvent
 
 
