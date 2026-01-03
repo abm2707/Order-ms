@@ -5,10 +5,12 @@ import com.akhil.orders.dto.request.CreateOrderRequest;
 import com.akhil.orders.dto.response.OrderResponse;
 import com.akhil.orders.mapper.OrderMapper;
 import com.akhil.orders.service.OrderService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.UUID;
 
 @RestController
@@ -24,13 +26,9 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('USER')")
-    public OrderResponse createOrder(@Valid @RequestBody CreateOrderRequest request) {
+    public OrderResponse createOrder(@Valid @RequestBody CreateOrderRequest request) throws JsonProcessingException {
 
-        Order order = orderService.createOrder(
-                request.getCustomerId(),
-                request.getTotalAmount(),
-                request.getCurrency()
-        );
+        Order order = orderService.createOrder(request);
 
         return OrderMapper.toResponse(order);
     }

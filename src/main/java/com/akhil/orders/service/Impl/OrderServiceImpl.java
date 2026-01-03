@@ -1,16 +1,16 @@
 package com.akhil.orders.service.Impl;
 
+import com.akhil.orders.dto.request.CreateOrderRequest;
 import com.akhil.orders.event.OrderEventPublisher;
 import com.akhil.orders.domain.entity.Order;
-import com.akhil.orders.event.OrderCreatedEvent;
+import org.akhil.common.events.OrderCreatedEvent;
 import com.akhil.orders.repository.OrderRepository;
 import com.akhil.orders.service.OrderService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -28,17 +28,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder(UUID customerId,
-                             BigDecimal totalAmount,
-                             String currency) {
+    @Transactional
+    public Order createOrder(CreateOrderRequest request) {
 
         String orderNumber = generateOrderNumber();
 
-        Order order = new Order(
+        /*Order order = new Order(
                 orderNumber,
-                customerId,
-                totalAmount,
-                currency
+                request.getCustomerId(),
+                request.getTotalAmount(),
+                request.getCurrency()
+        ); */
+
+        Order order = new Order();
+
+        request.getItems().forEach(item ->
+                order.addItem(
+                        item.getProductId(),
+                        item.getQuantity(),
+                        item.getMrp(),
+                        item.getRate(),
+                        item.getDiscount(),
+                        item.getFinalPrice()
+                )
         );
 
         Order savedOrder = orderRepository.save(order);
@@ -52,8 +64,10 @@ public class OrderServiceImpl implements OrderService {
                         savedOrder.getCreatedAt()
                 )
         );
+
         return savedOrder;
     }
+
 
     @Override
     public Order confirmOrder(UUID orderId) {

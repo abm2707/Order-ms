@@ -1,9 +1,12 @@
 package com.akhil.orders.dto.response;
 
+import com.akhil.orders.domain.entity.OrderItem;
 import com.akhil.orders.domain.valueobject.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 
@@ -16,7 +19,8 @@ public class OrderResponse {
     private OrderStatus status;
     private BigDecimal totalAmount;
     private String currency;
-    private Instant createdAt;
+    private Date createdAt;
+    private List<OrderItemResponse> items;
 
     public OrderResponse(UUID id,
                          String orderNumber,
@@ -24,7 +28,7 @@ public class OrderResponse {
                          OrderStatus status,
                          BigDecimal totalAmount,
                          String currency,
-                         Instant createdAt) {
+                         Date createdAt, List<OrderItemResponse> items) {
         this.id = id;
         this.orderNumber = orderNumber;
         this.customerId = customerId;
@@ -32,5 +36,6 @@ public class OrderResponse {
         this.totalAmount = totalAmount;
         this.currency = currency;
         this.createdAt = createdAt;
+        this.items = items;
     }
 }

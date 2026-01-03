@@ -3,20 +3,25 @@ package com.akhil.orders.domain.entity;
 import com.akhil.orders.domain.valueobject.OrderStatus;
 import com.akhil.orders.exception.InvalidOrderStateException;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
-@Data
 @Table(
         name = "orders",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_order_order_number", columnNames = "order_number")
+                @UniqueConstraint(
+                        name = "uk_order_order_number",
+                        columnNames = "order_number"
+                )
         }
 )
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id
@@ -40,17 +45,56 @@ public class Order {
     private String currency;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<OrderItem> items = new ArrayList<>();
+
+    /* ======================
+       Optimistic Locking
+       ====================== */
 
     @Version
     private Long version;
 
-    protected Order() {
-        // JPA
+    // Methods to add items to order.
+    public void addItem(
+            UUID productId,
+            int quantity,
+            BigDecimal mrp,
+            BigDecimal rate,
+            BigDecimal discount,
+            BigDecimal finalPrice
+    ) {
+        this.items.add(
+                new OrderItem(
+                        productId,
+                        quantity,
+                        mrp,
+                        rate,
+                        discount,
+                        finalPrice,
+                        this
+                )
+        );
     }
+
+    public List<OrderItem> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    /* ======================
+       Constructor
+       ====================== */
 
     public Order(String orderNumber,
                  UUID customerId,
@@ -81,7 +125,7 @@ public class Order {
     public void markPaid() {
         if (this.status != OrderStatus.CONFIRMED) {
             throw new InvalidOrderStateException(
-                    "Order can only be paid after it is CONFIRMED"
+                    "Order can only be paid after CONFIRMED state"
             );
         }
         this.status = OrderStatus.PAID;
@@ -102,18 +146,18 @@ public class Order {
     }
 
     /* ======================
-       Audit Hooks
+       JPA Lifecycle Hooks
        ====================== */
 
     @PrePersist
     protected void onCreate() {
-        Instant now = Instant.now();
+        Date now = new Date();
         this.createdAt = now;
         this.updatedAt = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = Instant.now();
+        this.updatedAt = new Date();
     }
 }

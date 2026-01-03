@@ -1,6 +1,6 @@
 package com.akhil.orders.config;
 
-import com.akhil.orders.event.OrderCreatedEvent;
+import org.akhil.common.events.OrderCreatedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ public class KafkaConsumerConfig {
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "com.akhil.orders.event");
-        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.akhil.orders.event.OrderCreatedEvent");
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.akhil.common.events.OrderCreatedEvent");
         config.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
 
         return new DefaultKafkaConsumerFactory<>(

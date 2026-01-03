@@ -1,5 +1,6 @@
 package com.akhil.orders.event;
 
+import org.akhil.common.events.OrderCreatedEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 

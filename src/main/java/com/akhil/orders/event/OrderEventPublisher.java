@@ -2,6 +2,7 @@ package com.akhil.orders.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.akhil.common.events.OrderCreatedEvent;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
