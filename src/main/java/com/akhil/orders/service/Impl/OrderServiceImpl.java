@@ -1,16 +1,23 @@
 package com.akhil.orders.service.Impl;
 
-import com.akhil.orders.dto.request.CreateOrderRequest;
-import com.akhil.orders.event.OrderEventPublisher;
+import com.akhil.orders.Exceptions.InventoryProductNotFoundException;
+import com.akhil.orders.Infrastructure.InventoryClient;
 import com.akhil.orders.domain.entity.Order;
-import org.akhil.common.events.OrderCreatedEvent;
+import com.akhil.orders.dto.request.CreateOrderRequest;
+import com.akhil.orders.dto.response.InventoryErrorResponse;
+import com.akhil.orders.event.OrderEventPublisher;
 import com.akhil.orders.repository.OrderRepository;
 import com.akhil.orders.service.OrderService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityNotFoundException;
+import org.akhil.common.events.OrderCreatedEvent;
+import org.akhil.common.events.OrderItemEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,9 +25,11 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-
     @Autowired
     OrderEventPublisher eventPublisher;
+
+    @Autowired
+    InventoryClient inventoryClient;
 
     public OrderServiceImpl(OrderRepository orderRepository, OrderEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
@@ -33,14 +42,22 @@ public class OrderServiceImpl implements OrderService {
 
         String orderNumber = generateOrderNumber();
 
-        /*Order order = new Order(
+        InventoryErrorResponse error =
+                inventoryClient.checkAvailability(request);
+
+        if (error != null) {
+            throw new InventoryProductNotFoundException(
+                    error.getCode(),
+                    error.getMessage()
+            );
+        }
+
+        Order order = new Order(
                 orderNumber,
                 request.getCustomerId(),
                 request.getTotalAmount(),
                 request.getCurrency()
-        ); */
-
-        Order order = new Order();
+        );
 
         request.getItems().forEach(item ->
                 order.addItem(
@@ -55,15 +72,21 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        eventPublisher.publishOrderCreated(
+        List<OrderItemEvent> itemEvents = savedOrder.getItems().stream().map(item -> new OrderItemEvent(
+                item.getProductId(),
+                item.getQuantity()
+        )).toList();
+
+        /* eventPublisher.publishOrderCreated(
                 new OrderCreatedEvent(
                         savedOrder.getId(),
                         savedOrder.getCustomerId(),
                         savedOrder.getTotalAmount(),
                         savedOrder.getCurrency(),
-                        savedOrder.getCreatedAt()
+                        savedOrder.getCreatedAt(),
+                        itemEvents
                 )
-        );
+        ); */
 
         return savedOrder;
     }

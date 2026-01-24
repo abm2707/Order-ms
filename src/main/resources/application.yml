@@ -52,17 +52,15 @@ security:
 
 kafka:
   bootstrap-servers: localhost:9092
-  consumer:
-    auto-startup: true
-    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-    properties:
-      spring.json.trusted.packages: "com.akhil.orders.event"
+  auto-startup: false
   producer:
     key-serializer: org.apache.kafka.common.serialization.StringSerializer
     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:
       spring.json.trusted.packages: "org.akhil.common.events"
+
+inventory:
+  base-url: http://localhost:9090/inventory
 
 
 

@@ -13,7 +13,7 @@ public final class OrderMapper {
 
     public static OrderResponse toResponse(Order order) {
 
-        List<OrderItemResponse> items = order.getItems().stream().map(item-> new OrderItemResponse(
+        List<OrderItemResponse> items = order.getItems().stream().map(item -> new OrderItemResponse(
                 item.getProductId(),
                 item.getQuantity(),
                 item.getMrp(),

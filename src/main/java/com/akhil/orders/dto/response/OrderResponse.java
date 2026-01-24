@@ -1,14 +1,12 @@
 package com.akhil.orders.dto.response;
 
-import com.akhil.orders.domain.entity.OrderItem;
 import com.akhil.orders.domain.valueobject.OrderStatus;
+import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import lombok.Data;
 
 @Data
 public class OrderResponse {

@@ -22,7 +22,7 @@ public class OrderQueryService {
     public List<OrderItemResponse> getOrderItems(UUID orderId) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new RuntimeException("Order Not Found"));
+                .orElseThrow(() -> new RuntimeException("Order Not Found"));
 
         return order.getItems()
                 .stream()

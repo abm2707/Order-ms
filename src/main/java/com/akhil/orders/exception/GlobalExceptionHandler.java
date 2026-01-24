@@ -1,4 +1,5 @@
 package com.akhil.orders.exception;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 import java.util.Map;
-import java.util.UUID;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

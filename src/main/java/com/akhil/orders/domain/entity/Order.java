@@ -66,6 +66,19 @@ public class Order {
     @Version
     private Long version;
 
+    public Order(String orderNumber,
+                 UUID customerId,
+                 BigDecimal totalAmount,
+                 String currency) {
+
+        this.id = UUID.randomUUID();
+        this.orderNumber = orderNumber;
+        this.customerId = customerId;
+        this.totalAmount = totalAmount;
+        this.currency = currency;
+        this.status = OrderStatus.CREATED;
+    }
+
     // Methods to add items to order.
     public void addItem(
             UUID productId,
@@ -88,25 +101,12 @@ public class Order {
         );
     }
 
-    public List<OrderItem> getItems() {
-        return Collections.unmodifiableList(items);
-    }
-
     /* ======================
        Constructor
        ====================== */
 
-    public Order(String orderNumber,
-                 UUID customerId,
-                 BigDecimal totalAmount,
-                 String currency) {
-
-        this.id = UUID.randomUUID();
-        this.orderNumber = orderNumber;
-        this.customerId = customerId;
-        this.totalAmount = totalAmount;
-        this.currency = currency;
-        this.status = OrderStatus.CREATED;
+    public List<OrderItem> getItems() {
+        return Collections.unmodifiableList(items);
     }
 
     /* ======================

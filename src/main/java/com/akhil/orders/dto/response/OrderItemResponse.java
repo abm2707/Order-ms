@@ -1,6 +1,5 @@
 package com.akhil.orders.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;

@@ -33,6 +33,15 @@ public class OrderController {
         return OrderMapper.toResponse(order);
     }
 
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasRole('USER')")
+//    public String createOrder(@Valid @RequestBody CreateOrderRequest request) throws JsonProcessingException {
+//        orderService.createOrder(request);
+//
+//        return "AFTER_SERVICE";
+//    }
+
     @PostMapping("/{orderId}/confirm")
     @PreAuthorize("hasRole('ADMIN')")
     public OrderResponse confirmOrder(@PathVariable UUID orderId) {

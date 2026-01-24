@@ -29,7 +29,7 @@ public class SecurityConfig {
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/**","/auth/token/**").permitAll()
+                        .requestMatchers("/actuator/**", "/auth/token/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

@@ -3,45 +3,45 @@ package com.akhil.orders.config;
 import org.akhil.common.events.OrderCreatedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@EnableKafka
 public class KafkaConsumerConfig {
 
-    @Value("${kafka.bootstrap-servers}")
-    private String bootstrapServers;
-
     @Bean
-    public ConsumerFactory<String, OrderCreatedEvent> orderConsumerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "order-created-group");
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "com.akhil.orders.event");
-        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.akhil.common.events.OrderCreatedEvent");
-        config.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+    public ConsumerFactory<String, OrderCreatedEvent> consumerFactory() {
+
+        JsonDeserializer<OrderCreatedEvent> deserializer =
+                new JsonDeserializer<>(OrderCreatedEvent.class);
+        deserializer.addTrustedPackages("org.akhil.common.events");
 
         return new DefaultKafkaConsumerFactory<>(
-                config,
+                Map.of(
+                        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092",
+                        ConsumerConfig.GROUP_ID_CONFIG, "order-created-group"
+                ),
                 new StringDeserializer(),
-                new JsonDeserializer<>(OrderCreatedEvent.class, false)
+                deserializer
         );
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(orderConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent>
+    kafkaListenerContainerFactory() {
+
+        ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 }
+
