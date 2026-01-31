@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
+
 public class InventoryErrorResponse {
     private String code;
     private String message;

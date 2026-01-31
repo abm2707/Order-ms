@@ -1,6 +1,7 @@
 package com.akhil.orders.domain.entity;
 
 import com.akhil.orders.domain.valueobject.OrderStatus;
+import com.akhil.orders.domain.valueobject.PaymentMethod;
 import com.akhil.orders.exception.InvalidOrderStateException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -52,6 +53,9 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
     @OneToMany(
             mappedBy = "order",
             cascade = CascadeType.ALL,
@@ -76,7 +80,7 @@ public class Order {
         this.customerId = customerId;
         this.totalAmount = totalAmount;
         this.currency = currency;
-        this.status = OrderStatus.CREATED;
+        this.status = OrderStatus.PENDING;
     }
 
     // Methods to add items to order.

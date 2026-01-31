@@ -9,6 +9,7 @@ import com.akhil.orders.event.OrderEventPublisher;
 import com.akhil.orders.repository.OrderRepository;
 import com.akhil.orders.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.akhil.common.events.OrderCreatedEvent;
 import org.akhil.common.events.OrderItemEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -42,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
         String orderNumber = generateOrderNumber();
 
-        InventoryErrorResponse error =
+        /* InventoryErrorResponse error =
                 inventoryClient.checkAvailability(request);
 
         if (error != null) {
@@ -50,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
                     error.getCode(),
                     error.getMessage()
             );
-        }
+        } */
 
         Order order = new Order(
                 orderNumber,
@@ -77,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
                 item.getQuantity()
         )).toList();
 
-        /* eventPublisher.publishOrderCreated(
+        eventPublisher.publishOrderCreated(
                 new OrderCreatedEvent(
                         savedOrder.getId(),
                         savedOrder.getCustomerId(),
@@ -86,7 +88,9 @@ public class OrderServiceImpl implements OrderService {
                         savedOrder.getCreatedAt(),
                         itemEvents
                 )
-        ); */
+        );
+
+        log.info("pushing Order Details to Inventory via Kafka {}", savedOrder.getId());
 
         return savedOrder;
     }
