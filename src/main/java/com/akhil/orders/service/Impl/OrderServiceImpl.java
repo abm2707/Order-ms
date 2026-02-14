@@ -1,10 +1,7 @@
 package com.akhil.orders.service.Impl;
 
-import com.akhil.orders.Exceptions.InventoryProductNotFoundException;
-import com.akhil.orders.Infrastructure.InventoryClient;
 import com.akhil.orders.domain.entity.Order;
 import com.akhil.orders.dto.request.CreateOrderRequest;
-import com.akhil.orders.dto.response.InventoryErrorResponse;
 import com.akhil.orders.event.OrderEventPublisher;
 import com.akhil.orders.repository.OrderRepository;
 import com.akhil.orders.service.OrderService;
@@ -13,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.akhil.common.events.OrderCreatedEvent;
 import org.akhil.common.events.OrderItemEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +25,6 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderEventPublisher eventPublisher;
 
-    @Autowired
-    InventoryClient inventoryClient;
 
     public OrderServiceImpl(OrderRepository orderRepository, OrderEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
@@ -43,22 +36,13 @@ public class OrderServiceImpl implements OrderService {
     public Order createOrder(CreateOrderRequest request) {
 
         String orderNumber = generateOrderNumber();
-
-        /* InventoryErrorResponse error =
-                inventoryClient.checkAvailability(request);
-
-        if (error != null) {
-            throw new InventoryProductNotFoundException(
-                    error.getCode(),
-                    error.getMessage()
-            );
-        } */
-
+        
         Order order = new Order(
                 orderNumber,
                 request.getCustomerId(),
                 request.getTotalAmount(),
-                request.getCurrency()
+                request.getCurrency(),
+                request.getPaymentMethod()
         );
 
         request.getItems().forEach(item ->

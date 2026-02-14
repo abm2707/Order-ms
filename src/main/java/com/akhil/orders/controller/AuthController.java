@@ -1,10 +1,18 @@
 package com.akhil.orders.controller;
 
-import com.akhil.orders.util.JwtUtil;
+import com.akhil.orders.config.JwtUtil;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+@CrossOrigin(
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.POST, RequestMethod.OPTIONS}
+)
 
 @RestController
 public class AuthController {

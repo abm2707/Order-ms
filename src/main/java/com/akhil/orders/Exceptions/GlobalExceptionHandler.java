@@ -1,4 +1,4 @@
-package com.akhil.orders.exception;
+package com.akhil.orders.Exceptions;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;

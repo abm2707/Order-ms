@@ -2,13 +2,14 @@ package com.akhil.orders.domain.entity;
 
 import com.akhil.orders.domain.valueobject.OrderStatus;
 import com.akhil.orders.domain.valueobject.PaymentMethod;
-import com.akhil.orders.exception.InvalidOrderStateException;
+import com.akhil.orders.Exceptions.InvalidOrderStateException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 
 @Entity
@@ -53,8 +54,27 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
+
+    @Column(name = "last_state_updated_at", nullable = false)
+    private Instant lastStateUpdatedAt;
+
+    @Column(name = "reconciliation_attempts", nullable = false)
+    private int reconciliationAttempts;
+
+    @Column(name = "last_reconciliation_at")
+    private Instant lastReconciliationAt;
+
+    @Column(name = "reconciliation_lock", nullable = false)
+    private boolean reconciliationLock;
+
+    @Column(name = "payment_reference_id")
+    private String paymentReferenceId;
+
+    @Column(name = "inventory_reservation_id")
+    private String inventoryReservationId;
 
     @OneToMany(
             mappedBy = "order",
@@ -73,7 +93,8 @@ public class Order {
     public Order(String orderNumber,
                  UUID customerId,
                  BigDecimal totalAmount,
-                 String currency) {
+                 String currency,
+                 PaymentMethod paymentMethod) {
 
         this.id = UUID.randomUUID();
         this.orderNumber = orderNumber;
@@ -81,6 +102,7 @@ public class Order {
         this.totalAmount = totalAmount;
         this.currency = currency;
         this.status = OrderStatus.PENDING;
+        this.paymentMethod = paymentMethod;
     }
 
     // Methods to add items to order.

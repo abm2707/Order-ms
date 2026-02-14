@@ -1,4 +1,4 @@
-package com.akhil.orders.util;
+package com.akhil.orders.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

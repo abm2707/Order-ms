@@ -6,5 +6,11 @@ public enum OrderStatus {
     PAID,
     CANCELLED,
     SHIPPED,
-    PENDING
+    PENDING,
+    PAYMENT_PENDING;
+
+    public boolean isTerminal() {
+        return this == CONFIRMED || this == CANCELLED;
+    }
+
 }

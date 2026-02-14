@@ -1,4 +1,4 @@
-package com.akhil.orders.exception;
+package com.akhil.orders.Exceptions;
 
 import java.time.Instant;
 

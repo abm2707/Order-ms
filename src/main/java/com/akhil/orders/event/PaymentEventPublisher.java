@@ -9,21 +9,21 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderEventPublisher {
+public class PaymentEventPublisher {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderEventPublisher.class);
-    private static final String ORDER_CREATED_TOPIC = "order.created";
+    private static final Logger log = LoggerFactory.getLogger(PaymentEventPublisher.class);
+    private static final String PAYMENT_REQUESTED_TOPIC = "payment.requested";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public OrderEventPublisher(KafkaTemplate<String, Object> kafkaTemplate) {
+    public PaymentEventPublisher(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void publishOrderCreated(OrderCreatedEvent event) {
+    public void publishPaymentRequest(PaymentRequestedEvent event) {
         //log.info("Producing OrderCreatedEvent: {}", objectMapper.writeValueAsString(event));
         kafkaTemplate.send(
-                ORDER_CREATED_TOPIC,
+                PAYMENT_REQUESTED_TOPIC,
                 event.getOrderId().toString(),
                 event
         );

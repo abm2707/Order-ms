@@ -39,7 +39,7 @@ management:
 
 logging:
   level:
-    root: WARN
+    root: INFO
     org.flywaydb: DEBUG
     org.apache.kafka: ERROR
     kafka: ERROR
@@ -61,6 +61,13 @@ kafka:
 
 inventory:
   base-url: http://localhost:9090/inventory
+
+reconciliation:
+  batch-size: 50
+  max-attempts: 5
+  sla:
+    PENDING: PT2M
+    PAYMENT_PENDING: PT10M
 
 
 

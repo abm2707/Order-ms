@@ -1,5 +1,6 @@
 package com.akhil.orders.dto.request;
 
+import com.akhil.orders.domain.valueobject.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
@@ -20,6 +21,9 @@ public class CreateOrderRequest {
 
     @NotBlank
     private String currency;
+
+    @NotNull
+    private PaymentMethod paymentMethod;
 
     @NotEmpty
     private List<OrderItemRequest> items;

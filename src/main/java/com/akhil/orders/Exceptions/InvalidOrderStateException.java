@@ -1,4 +1,4 @@
-package com.akhil.orders.exception;
+package com.akhil.orders.Exceptions;
 
 public class InvalidOrderStateException extends RuntimeException {
     public InvalidOrderStateException(String message) {
